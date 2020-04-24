@@ -1,55 +1,31 @@
-import React, { useState } from 'react'
-
-import useEventListener from '@use-it/event-listener'
+import React from 'react'
 
 import { TILE_SIZE, HEAD_OFSET } from '../../setings/constants'
 
 import './styles.css';
 
-interface IObjectLiteral {
-    [key: string]: any
-}
+
+import useHeroMoviment from '../../hooks/useHeroMoviment'
 
 const Hero = () => {
-    const [heroPositionX, setHeroPositionX] = useState(8);
-    const [heroPositionY, setHeroPositionY] = useState(3);
 
-    const [headDirection, setHeadDirection] = useState('right')
-
-    useEventListener('keydown', (event: any) => {
-        const keyEvents: IObjectLiteral = {
-            'ArrowUp': () => setHeroPositionY(heroPositionY + 1),
-            'ArrowDown': () => setHeroPositionY(heroPositionY - 1),
-            'ArrowLeft': () => {
-                setHeadDirection('left');
-                setHeroPositionX(heroPositionX - 1);
-            },
-            'ArrowRight': () => {
-                setHeadDirection('right');
-                setHeroPositionX(heroPositionX + 1);
-            },
-        }
-
-        if (keyEvents[event.key]) {
-            keyEvents[event.key]();
-        }
-
-    })
-
+    const { positionX, positionY, direction } = useHeroMoviment({ x: 8, y: 3 })
 
     return (
         <div
             style={{
                 position: 'absolute',
-                bottom: TILE_SIZE * heroPositionY,
-                left: TILE_SIZE * heroPositionX,
+                bottom: TILE_SIZE * positionY,
+                left: TILE_SIZE * positionX,
                 width: TILE_SIZE,
                 height: TILE_SIZE + HEAD_OFSET,
                 backgroundImage: 'url(./assets/HERO.png)',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: `0px -${TILE_SIZE - HEAD_OFSET}px`,
                 animation: 'hero-animation 1s steps(4) infinite',
-                transform: `scaleX(${headDirection === 'right' ? 1 : -1})`
+                transform: `scaleX(${direction === 'right' ? 1 : -1})`,
+                zIndex: 1,
+
             }}
         />
     );
